@@ -1,0 +1,17 @@
+[Unit]
+Description=SEW Gateway Modbus Simulation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=gea
+WorkingDirectory=/home/gea/SEW_FU_Simulation
+ExecStart=/home/gea/SEW_FU_Simulation/.venv/bin/python /home/gea/SEW_FU_Simulation/SEW_simulation_start.py --ip 10.150.2.4 --port 502 --motors 8 --web-port 8090 --wait-ip --wait-ip-timeout 0 --wait-ip-interval 2
+Restart=always
+RestartSec=2
+StandardOutput=append:/home/gea/SEW_FU_Simulation/sew_sim.log
+StandardError=append:/home/gea/SEW_FU_Simulation/sew_sim.log
+
+[Install]
+WantedBy=multi-user.target
