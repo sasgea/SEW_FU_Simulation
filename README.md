@@ -55,6 +55,78 @@ python SEW_simulation_start.py --ip 10.150.2.4 --port 502 --motors 8 --web-port 
 Open dashboard:
 - `http://<host>:8090`
 
+UI snapshot:
+
+![SEW Web UI](docs/Web_SEW_UI.png)
+
+## Web UI Control Overview
+
+The web UI is intended for quick simulation steering and diagnostics.
+
+What you can control in the browser:
+- `Load %` slider per motor
+- `Inject/Clear Fault` button per motor
+
+What you can observe in the browser:
+- enable and fault state
+- setpoint RPM and actual RPM
+- current percentage
+- global gateway info and uptime
+
+## API Control Overview
+
+The dashboard uses the same HTTP API that can also be used by scripts.
+
+Read full state:
+
+```bash
+curl -s http://127.0.0.1:8090/api/state
+```
+
+Set load for motor 1 (`idx=0`):
+
+```bash
+curl -X POST http://127.0.0.1:8090/api/motor/0 \
+	-H "Content-Type: application/json" \
+	-d '{"load_percent": 60}'
+```
+
+Inject fault on motor 1:
+
+```bash
+curl -X POST http://127.0.0.1:8090/api/motor/0 \
+	-H "Content-Type: application/json" \
+	-d '{"fault": true}'
+```
+
+Clear fault on motor 1:
+
+```bash
+curl -X POST http://127.0.0.1:8090/api/motor/0 \
+	-H "Content-Type: application/json" \
+	-d '{"fault": false}'
+```
+
+Optional manual override of setpoint RPM (for debug only):
+
+```bash
+curl -X POST http://127.0.0.1:8090/api/motor/0 \
+	-H "Content-Type: application/json" \
+	-d '{"manual_setpoint_rpm": -491}'
+```
+
+Disable manual override and return to Modbus command source:
+
+```bash
+curl -X POST http://127.0.0.1:8090/api/motor/0 \
+	-H "Content-Type: application/json" \
+	-d '{"manual_setpoint_rpm": null}'
+```
+
+Note:
+- In normal operation the RCU should control setpoint via Modbus.
+- Web/API overrides are mainly for test and diagnostics.
+
 Stop:
 - `Ctrl+C` in foreground mode
 
